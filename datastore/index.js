@@ -15,8 +15,8 @@ exports.create = (text, callback) => {
       if (err) {
         console.log('Error saving new todo');
       } else {
-      callback(null, { id, text }); 
-      };
+        callback(null, { id, text }); 
+      }
     });
   });
 };

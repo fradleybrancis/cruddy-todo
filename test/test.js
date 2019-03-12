@@ -28,7 +28,6 @@ describe('getNextUniqueId', () => {
 
   it('should use error first callback pattern', (done) => {
     counter.getNextUniqueId((err, id) => {
-      console.log('something random')
       expect(err).to.be.null;
       expect(id).to.exist;
       done();
@@ -113,9 +112,8 @@ describe('todos', () => {
 
   describe('readAll', () => {
     it('should return an empty array when there are no todos', (done) => {
-      console.log('---------------')
+      
       todos.readAll((err, todoList) => {
-        console.log('i made it')
         expect(err).to.be.null;
         expect(todoList.length).to.equal(0);
         done();
