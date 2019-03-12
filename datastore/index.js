@@ -22,35 +22,39 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var ids;
+  var data;
+  var id;
   fs.readdir(exports.dataDir, (err, files) => {
     if (err) {
-      console.log('read all failed!');
-    } else {
-      console.log(files[0]);
-      console.log(files[0].split('.'));
-      ids = files.map((val)=> val.split('.')[0]);
-      console.log('succeeded!', ids);
-      callback(null, ids);
+      console.log('error occurred!');
+      callback(err, null);
     }
+    data = files.map((name)=>{
+      id = name.split('.')[0];
+      return {id, text:id};
+    })
+    callback(null, data)
   });
-
-  // var data = _.map(items, (text, id) => {
-  //   // console.log('current text: ' + text, 'current id: ' + id);
-  //   return { id, text };
-  // });
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  fs.readFile(path.join(exports.dataDir, id+'.txt'), (err, text) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      callback(null, {id, text:text.toString()});
+    }
+  });
 };
 
 exports.update = (id, text, callback) => {
+  fs.writeFile(path.join(exports.dataDir, id+'.txt'), text, (err) => {
+    if (err) {
+      callback(new Error('File write failed',id,' ',text));
+    } else {
+      callback(null, text);
+    }
+  })
   var item = items[id];
   if (!item) {
     callback(new Error(`No item with id: ${id}`));
