@@ -28,6 +28,7 @@ describe('getNextUniqueId', () => {
 
   it('should use error first callback pattern', (done) => {
     counter.getNextUniqueId((err, id) => {
+      console.log('something random')
       expect(err).to.be.null;
       expect(id).to.exist;
       done();
@@ -36,6 +37,7 @@ describe('getNextUniqueId', () => {
 
   it('should give an id as a zero padded string', (done) => {
     counter.getNextUniqueId((err, id) => {
+      console.log('id is', id);
       expect(id).to.be.a.string;
       expect(id).to.match(/^0/);
       done();
@@ -45,6 +47,9 @@ describe('getNextUniqueId', () => {
   it('should give the next id based on the count in the file', (done) => {
     fs.writeFileSync(counter.counterFile, '00025');
     counter.getNextUniqueId((err, id) => {
+      console.log(counter.counterFile);
+      console.log(fs.readFileSync(counter.counterFile));
+      console.log(id, 'is the id I got as a test');
       expect(id).to.equal('00026');
       done();
     });
@@ -108,7 +113,9 @@ describe('todos', () => {
 
   describe('readAll', () => {
     it('should return an empty array when there are no todos', (done) => {
+      console.log('---------------')
       todos.readAll((err, todoList) => {
+        console.log('i made it')
         expect(err).to.be.null;
         expect(todoList.length).to.equal(0);
         done();

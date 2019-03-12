@@ -8,16 +8,37 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  counter.getNextUniqueId((err, id) => {
+    items[id] = text;
+    // make a new file with content the text, and filename id
+    fs.writeFile(exports.dataDir+'/'+id+'.txt', text, (err)=>{
+      if (err) {
+        console.log('Error saving new todo');
+      } else {
+      callback(null, { id, text }); 
+      };
+    });
+  });
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  var ids;
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      console.log('read all failed!');
+    } else {
+      console.log(files[0]);
+      console.log(files[0].split('.'));
+      ids = files.map((val)=> val.split('.')[0]);
+      console.log('succeeded!', ids);
+      callback(null, ids);
+    }
   });
-  callback(null, data);
+
+  // var data = _.map(items, (text, id) => {
+  //   // console.log('current text: ' + text, 'current id: ' + id);
+  //   return { id, text };
+  // });
 };
 
 exports.readOne = (id, callback) => {
