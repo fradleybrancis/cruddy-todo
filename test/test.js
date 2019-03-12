@@ -163,6 +163,7 @@ describe('todos', () => {
 
     it('should not change the counter', (done) => {
       todos.update('00001', 'updated todo', (err, todo) => {
+        // console.log('test for counter')
         const counterFileContents = fs.readFileSync(counter.counterFile).toString();
         expect(counterFileContents).to.equal('00001');
         done();

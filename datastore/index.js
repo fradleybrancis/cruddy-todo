@@ -31,9 +31,10 @@ exports.readAll = (callback) => {
     }
     data = files.map((name)=>{
       id = name.split('.')[0];
-      return {id, text:id};
-    })
-    callback(null, data)
+      return {id:id, text:id};
+    });
+    console.log(data);
+    callback(null, data);
   });
 };
 
@@ -48,31 +49,43 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  fs.writeFile(path.join(exports.dataDir, id+'.txt'), text, (err) => {
-    if (err) {
-      callback(new Error('File write failed',id,' ',text));
-    } else {
-      callback(null, text);
+  fs.readdir(exports.dataDir, (err, files) => {
+    var idExists = false;
+    _.forEach(files, (item) => {
+      if (id === item.split('.')[0]) {
+        idExists = true;
+        fs.writeFile(path.join(exports.dataDir, id+'.txt'), text, (err) => {
+          if (err) {
+            callback(new Error('File write failed',id,' ',text));
+          } else {
+            callback(null, { id: id, text: text });
+          }
+        });
+      }
+    });
+    if (!idExists) {
+      callback(new Error('id does not exist!'));
     }
-  })
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  });
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+  //path.join(exports.dataDir, id+'.txt')
+  fs.unlink(path.join(exports.dataDir, id+'.txt'), (err) => {
+    if (err) {
+      callback(new Error('Todo does not Exist!'));
+    } else {
+      callback();
+    }
+  });
+  // var item = items[id];
+  // delete items[id];
+  // if (!item) {
+  //   // report an error if item not found
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback();
+  // }
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
